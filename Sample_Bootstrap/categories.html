@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - Inventory Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin: 0;
+        }
+        
+        .btn-logout {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            height: fit-content;
+        }
+        
+        .nav-item {
+            display: block;
+            padding: 12px 20px;
+            color: #555;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .nav-item:hover {
+            background: var(--primary-gradient);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .nav-item.active {
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .main-content {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        
+        .search-section {
+            margin-bottom: 2rem;
+        }
+        
+        .search-input {
+            border-radius: 25px;
+            border: 2px solid #e0e0e0;
+            padding: 12px 20px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .btn-add {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .categories-table {
+            margin: 0;
+        }
+        
+        .categories-table thead {
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .categories-table th {
+            padding: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            border: none;
+        }
+        
+        .categories-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+        
+        .categories-table tbody tr:hover {
+            background: #f8f9fa;
+            transform: scale(1.01);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 0 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-edit {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: white;
+        }
+        
+        .btn-delete {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+        
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .category-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .category-details h6 {
+            margin: 0;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .category-details small {
+            color: #666;
+        }
+        
+        .item-count {
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1 class="page-title">Categories Management</h1>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-logout" onclick="logout()">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-md-3 mb-4">
+                <div class="sidebar">
+                    <a href="dashboard.html" class="nav-item">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                    <a href="items.html" class="nav-item">
+                        <i class="fas fa-box me-2"></i>Items
+                    </a>
+                    <a href="#" class="nav-item active">
+                        <i class="fas fa-tags me-2"></i>Categories
+                    </a>
+                    <a href="units.html" class="nav-item">
+                        <i class="fas fa-weight me-2"></i>Units
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <div class="main-content">
+                    <!-- Search and Add Section -->
+                    <div class="search-section">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="text" class="form-control search-input" id="searchInput" placeholder="Search categories...">
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-add" onclick="showAddCategoryModal()">
+                                    <i class="fas fa-plus me-2"></i>Add Category
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Categories Table -->
+                    <div class="table-container">
+                        <table class="table categories-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Category Name</th>
+                                    <th>Description</th>
+                                    <th>Items</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriesTableBody">
+                                <!-- Categories will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <i class="fas fa-tags"></i>
+                        <h4>No Categories Found</h4>
+                        <p>Start by adding your first category to organize your inventory.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCategoryForm">
+                        <div class="mb-3">
+                            <label for="categoryName" class="form-label">Category Name</label>
+                            <input type="text" class="form-control" id="categoryName" placeholder="e.g., Electronics, Office Supplies" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoryDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="categoryDescription" rows="3" placeholder="Brief description of the category"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoryIcon" class="form-label">Icon (Optional)</label>
+                            <select class="form-control" id="categoryIcon">
+                                <option value="fa-box">Box</option>
+                                <option value="fa-laptop">Laptop</option>
+                                <option value="fa-chair">Chair</option>
+                                <option value="fa-broom">Broom</option>
+                                <option value="fa-tools">Tools</option>
+                                <option value="fa-book">Book</option>
+                                <option value="fa-pen">Pen</option>
+                                <option value="fa-desktop">Desktop</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoryColor" class="form-label">Color</label>
+                            <input type="color" class="form-control" id="categoryColor" value="#667eea">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addCategory()">Add Category</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sample data
+        let categories = [
+            { id: 1, name: 'Electronics', description: 'Computers, laptops, and electronic devices', icon: 'fa-laptop', color: '#667eea', itemCount: 45 },
+            { id: 2, name: 'Office Supplies', description: 'Paper, pens, and office essentials', icon: 'fa-pen', color: '#28a745', itemCount: 67 },
+            { id: 3, name: 'Furniture', description: 'Desks, chairs, and office furniture', icon: 'fa-chair', color: '#ffc107', itemCount: 23 },
+            { id: 4, name: 'Cleaning', description: 'Cleaning supplies and equipment', icon: 'fa-broom', color: '#dc3545', itemCount: 15 },
+            { id: 5, name: 'Tools', description: 'Maintenance tools and equipment', icon: 'fa-tools', color: '#6c757d', itemCount: 8 }
+        ];
+
+        let nextId = 6;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            renderCategories();
+        });
+
+        function checkAuth() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            if (!currentUser) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Render categories
+        function renderCategories() {
+            const tbody = document.getElementById('categoriesTableBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (categories.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            tbody.innerHTML = categories.map(category => `
+                <tr>
+                    <td>${category.id}</td>
+                    <td>
+                        <div class="category-info">
+                            <div class="category-icon" style="background: ${category.color};">
+                                <i class="fas ${category.icon}"></i>
+                            </div>
+                            <div class="category-details">
+                                <h6>${category.name}</h6>
+                                <small>${category.description}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${category.description}</td>
+                    <td><span class="item-count">${category.itemCount} items</span></td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="editCategory(${category.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-action btn-delete" onclick="deleteCategory(${category.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredCategories = categories.filter(category => 
+                category.name.toLowerCase().includes(searchTerm) ||
+                category.description.toLowerCase().includes(searchTerm)
+            );
+            renderFilteredCategories(filteredCategories);
+        });
+
+        function renderFilteredCategories(filteredCategories) {
+            const tbody = document.getElementById('categoriesTableBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (filteredCategories.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            tbody.innerHTML = filteredCategories.map(category => `
+                <tr>
+                    <td>${category.id}</td>
+                    <td>
+                        <div class="category-info">
+                            <div class="category-icon" style="background: ${category.color};">
+                                <i class="fas ${category.icon}"></i>
+                            </div>
+                            <div class="category-details">
+                                <h6>${category.name}</h6>
+                                <small>${category.description}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${category.description}</td>
+                    <td><span class="item-count">${category.itemCount} items</span></td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="editCategory(${category.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-action btn-delete" onclick="deleteCategory(${category.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Modal functions
+        function showAddCategoryModal() {
+            const modal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
+            document.getElementById('addCategoryForm').reset();
+            modal.show();
+        }
+
+        function addCategory() {
+            const name = document.getElementById('categoryName').value.trim();
+            const description = document.getElementById('categoryDescription').value.trim();
+            const icon = document.getElementById('categoryIcon').value;
+            const color = document.getElementById('categoryColor').value;
+
+            if (!name) {
+                alert('Please enter category name');
+                return;
+            }
+
+            // Check for duplicate
+            if (categories.some(cat => cat.name.toLowerCase() === name.toLowerCase())) {
+                alert('Category already exists');
+                return;
+            }
+
+            const newCategory = {
+                id: nextId++,
+                name: name,
+                description: description || 'No description available',
+                icon: icon,
+                color: color,
+                itemCount: 0
+            };
+
+            categories.push(newCategory);
+            renderCategories();
+
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
+            modal.hide();
+        }
+
+        function editCategory(id) {
+            const category = categories.find(c => c.id === id);
+            if (category) {
+                const newName = prompt('Edit Category Name:', category.name);
+                const newDescription = prompt('Edit Description:', category.description);
+
+                if (newName !== null && newName.trim()) {
+                    category.name = newName.trim();
+                    category.description = newDescription ? newDescription.trim() : 'No description available';
+                    renderCategories();
+                }
+            }
+        }
+
+        function deleteCategory(id) {
+            const category = categories.find(c => c.id === id);
+            if (category) {
+                if (category.itemCount > 0) {
+                    alert(`Cannot delete "${category.name}" because it contains ${category.itemCount} items.`);
+                    return;
+                }
+                
+                if (confirm(`Are you sure you want to delete "${category.name}"?`)) {
+                    categories = categories.filter(cat => cat.id !== id);
+                    renderCategories();
+                }
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>
